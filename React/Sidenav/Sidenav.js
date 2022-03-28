@@ -90,9 +90,10 @@ export default function Sidenav({ children, items }) {
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
     const [submenus, setSubMenus] = React.useState()
+    const [currentPage, setCurrentPage] = React.useState('')
     const { firstItems, secondItems } = items
     React.useEffect(() => {
-        console.log(firstItems, secondItems)
+        setCurrentPage(firstItems[0])
         let submenu_obj = {}
         if (firstItems) {
             firstItems.forEach(item => {
@@ -110,20 +111,29 @@ export default function Sidenav({ children, items }) {
         }
         setSubMenus(submenu_obj);
     }, [])
+    const handleCurrentPage = (page) => {
+        setCurrentPage(page)
+    }
     const handleDrawerOpen = () => {
         setOpen(true);
     };
 
     const handleDrawerClose = () => {
         setOpen(false);
+        let obj = {}
+        Object.keys(submenus).forEach(key => {
+            obj[key] = false
+        })
+        setSubMenus(obj)
     };
 
     const handleOpenSubmenu = (submenu) => {
-        console.log(submenu, submenus)
+        setOpen(true);
         setSubMenus({
             ...submenus,
             [submenu]: !submenus[submenu]
         })
+        
 
     }
 
@@ -146,7 +156,7 @@ export default function Sidenav({ children, items }) {
                             <MenuIcon />
                         </IconButton>
                         <Typography variant="h6" noWrap component="div">
-                            Mini variant drawer
+                            { currentPage.label ? currentPage.label : currentPage.name }
                         </Typography>
                     </Toolbar>
                 </AppBar>
@@ -165,17 +175,19 @@ export default function Sidenav({ children, items }) {
                                         onClick={() => handleOpenSubmenu(item.name)}
                                         sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }}
                                     >
-                                        <div className="caretDown"><KeyboardArrowDownIcon /></div>
+                                        { open && <div className="caretDown"><KeyboardArrowDownIcon /></div> }
                                         <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', }}>
                                             {item.icon}
                                         </ListItemIcon>
                                         <ListItemText primary={item.label ? item.label : item.name} sx={{ opacity: open ? 1 : 0 }} />
                                     </ListItemButton>
                                     {submenus[item.name] && <ul>
-                                        {item.subItems.map(subitem => <li key={subitem.name}>{console.log(subitem)}<Link to={subitem.url ? subitem.url : '/'}>{subitem.label}</Link></li>)}
+                                        {item.subItems.map(subitem => <li key={subitem.name}>{console.log(subitem)}<Link 
+                                            to={subitem.url ? subitem.url : '/'} 
+                                            onClick={() => handleCurrentPage(subitem)}>{subitem.label}</Link></li>)}
                                     </ul>}
                                 </NestedListItem> :
-                                <Link to={item.url ? item.url : '/'} key={item.name}>
+                                <Link to={item.url ? item.url : '/'} key={item.name} onClick={() => handleCurrentPage(item)}>
                                     <ListItemButton
                                         sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }}
                                     >
@@ -197,22 +209,24 @@ export default function Sidenav({ children, items }) {
                                         key="Projects"
                                         sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }}
                                     >
-                                        <div className="caretDown"><KeyboardArrowDownIcon /></div>
+                                        { open && <div className="caretDown"><KeyboardArrowDownIcon /></div> }
                                         <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', }}>
                                             {item.icon}
                                         </ListItemIcon>
                                         <ListItemText primary="Dashboard" sx={{ opacity: open ? 1 : 0 }} />
                                     </ListItemButton>
                                     {submenus[item.name] && <ul>
-                                        {item.subItems.map(subitem => <li key={subitem.name}><Link to={subitem.url ? subitem.url : '/'}>{subitem.label}</Link></li>)}
+                                        {item.subItems.map(subitem => <li key={subitem.name}><Link 
+                                            to={subitem.url ? subitem.url : '/'} 
+                                            onClick={() => handleCurrentPage(subitem)}>{subitem.label}</Link></li>)}
                                     </ul>}
                                 </NestedListItem> :
-                                <Link to={item.url ? item.url : '/'}>
+                                <Link to={item.url ? item.url : '/'} onClick={() => handleCurrentPage(item)}>
                                     <ListItemButton
                                         key={item.name}
                                         sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }}
                                     >
-                                        <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', }}>
+                                        <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>
                                             {item.icon}
                                         </ListItemIcon>
                                         <ListItemText primary={item.label ? item.label : item.name} sx={{ opacity: open ? 1 : 0 }} />
@@ -221,14 +235,18 @@ export default function Sidenav({ children, items }) {
                         )}
                     </List>}
                 </Drawer>
-                <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+                <Container>
                     <DrawerHeader />
-                    {children}
-                </Box>
+                    { children }
+                </Container>
             </Box> :
             <div>Loading</div>
     );
 }
+
+const Container = styledComponents.div`
+    padding: 25px;
+`
 
 const NestedListItem = styledComponents.div`
     position: relative;    
