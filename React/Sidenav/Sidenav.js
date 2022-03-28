@@ -245,6 +245,7 @@ export default function Sidenav({ children, items }) {
 }
 
 const Container = styledComponents.div`
+    text-align: unset;
     padding: 25px;
 `
 
