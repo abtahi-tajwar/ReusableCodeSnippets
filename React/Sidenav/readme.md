@@ -7,6 +7,50 @@ This is a reusable react component for sidebar
 Example Code
 
 * Props structure
-<img src="/object_structure.png">
+```javascript
+const NavItems = {
+    firstItems: [
+        {
+            name: "dashboard",
+            label: "Dashboard",         
+            icon: <DashboardIcon />
+        },
+        {
+            name: "personal_informations",
+            label: "Personal Informations",
+            url: "/personal_information", 
+            icon: <PersonIcon />
+        },
+        {
+            name: "projects",
+            label: "Projects",
+            icon: <AccountTreeIcon />,
+            subItems: [
+                { name: "manage_projects", label: "Manage Projects"},
+                { name: "add_projects", label: "Add Projects", url: "/projects/add"},
+                { name: "manage_types", label: "Manage Types"}
+            ]
+        },
+        {
+            name: "employment",
+            label: "Employment",
+            icon: <WorkIcon />,
+            subItems: [
+                { name: "manage_works", label: "Manage Projects"},
+                { name: "add_work", label: "Add Projects"}
+            ]
+        },
+        {
+            name: "gallery",
+            label: "Gallery",
+            icon: <CollectionsIcon />
+        }                                             
+    ]
+}
+```
 * Calling the component
-<img src="/component_calling.png">
+```javascript
+<Sidenav items={NavItems} >
+    content
+</Sidenav>
+```
