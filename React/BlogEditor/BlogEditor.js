@@ -7,6 +7,8 @@ import Box from '@mui/material/Box';
 import styled from 'styled-components'
 import EditIcon from '@mui/icons-material/Edit';
 import Delete from '@mui/icons-material/Delete'
+import TextFieldsIcon from '@mui/icons-material/TextFields';
+import ImageIcon from '@mui/icons-material/Image';
 
 function BlogEditor({ handleOutput }) {
 
@@ -43,16 +45,33 @@ function BlogEditor({ handleOutput }) {
     const handleDelete = (index) => {
         setElements(elements.filter((item, i) => i !== index))
     }
+    const handleCreateAtIndex = (index) => {
+        setCurrentTextElement({
+            mode: "create",
+            index: index + 1,
+            content: ""
+        })
+        setModalIsOpen(true)
+    }
     const handleCreateOrEditText = () => {
         setModalIsOpen(false)
         if(currentTextElement.mode === 'create') {
-            setElements([
-                ...elements,
-                {
+            if (currentTextElement.index === -1) {
+                setElements([
+                    ...elements,
+                    {
+                        type: "text",
+                        content: currentTextElement.content
+                    }
+                ])
+            } else {
+                var temp = elements
+                temp.splice(currentTextElement.index, 0, {
                     type: "text",
                     content: currentTextElement.content
-                }
-            ])
+                })
+                setElements(temp)
+            }
             setCurrentTextElement({
                 mode: "create",
                 index: -1,
@@ -90,6 +109,22 @@ function BlogEditor({ handleOutput }) {
             ])
         }
     }
+    const handleUploadImageAtIndex = (e, index) => {
+        const blob = e.target.files[0]
+        const reader = new FileReader()
+        reader.readAsDataURL(blob)
+        reader.onload = function() {
+            var temp = elements
+            temp.splice(index+1, 0, {
+                type: "image",
+                file: e.target.files[0],
+                content: `<img src=${reader.result} />`
+            })
+            setElements([
+                ...temp
+            ])
+        }
+    }
     
   return (
     <React.Fragment>
@@ -122,6 +157,12 @@ function BlogEditor({ handleOutput }) {
                         <div className="button">
                             <button onClick={() => handleEdit(index)}><EditIcon /></button>
                             <button onClick={() => handleDelete(index)}><Delete /></button>
+                        </div>
+                        <div className="addAfter">
+                            <Button onClick={() => handleCreateAtIndex(index)}><TextFieldsIcon /></Button>
+                            <Button component="label"><ImageIcon />
+                                <input type="file" onChange={(e) => handleUploadImageAtIndex(e, index)} hidden />
+                            </Button>
                         </div>
                     </TextPreviewBlock>
                 </Col>}
@@ -175,6 +216,38 @@ const TextPreviewBlock = styled.div`
                 height: 16px;
             }
         }
+    }
+`
+const SmallButton = styled.button`
+    border: none;
+    outline: none;
+    border: 1px solid black;
+    padding: 0px 5px;
+    background: transparent;
+    border-radius: 3px;
+    margin: 0px 5px;
+    svg {
+        transform: scale(0.5);
+    }
+    &:hover {
+        background-color: #f5f5f5;
+    }
+`
+const SmallFileInput = styled.input.attrs(props => ({
+    type: 'file'
+}))`
+    border: none;
+    outline: none;
+    border: 1px solid black;
+    padding: 0px 5px;
+    background: transparent;
+    border-radius: 3px;
+    margin: 0px 5px;
+    svg {
+        transform: scale(0.5);
+    }
+    &:hover {
+        background-color: #f5f5f5;
     }
 `
 const ImagePreviewBlock = styled.div`
