@@ -7,11 +7,6 @@ import Box from '@mui/material/Box';
 import styled from 'styled-components'
 import EditIcon from '@mui/icons-material/Edit';
 import Delete from '@mui/icons-material/Delete'
-import { EditorState, ContentState } from 'draft-js';
-import { Editor } from 'react-draft-wysiwyg';
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { convertFromHTML } from 'draft-js'
-import { convertToHTML } from 'draft-convert';
 
 function BlogEditor({ handleOutput }) {
 
@@ -160,6 +155,8 @@ const modalStyle = {
 }
 const TextPreviewBlock = styled.div`
     position: relative;
+    box-sizing: border-box;
+    padding: 50px;
     .button {
         position: absolute;
         right: 0px;
@@ -182,7 +179,11 @@ const TextPreviewBlock = styled.div`
 `
 const ImagePreviewBlock = styled.div`
     position: relative;
-    padding: 20px;
+    padding: 50px;
+    box-sizing: border-box;
+    img {
+        max-width: 100%;
+    }
     .button {
         position: absolute;
         right: 0px;
@@ -203,39 +204,4 @@ const ImagePreviewBlock = styled.div`
         }
     }
 `
-
-
-function RichTextEditor({ value="<p>About</p>", handleValue, height="150px" }) {    
-    const [editorState, setEditorState] = React.useState(EditorState.createEmpty())    
-    const onEditorStateChange = (editorState) => {
-        handleValue(convertToHTML(editorState.getCurrentContent()))
-        setEditorState(editorState);
-    };
-    React.useEffect(() => {
-        const input_state = ContentState.createFromBlockArray(convertFromHTML(value))
-        setEditorState(EditorState.createWithContent(input_state))
-    }, [])
-
-    return (
-        <Wrapper height={height}>
-            <Editor
-                editorState={editorState}
-                wrapperClassName="demo-wrapper"
-                editorClassName="demo-editor"
-                onEditorStateChange={onEditorStateChange}
-            />
-        </Wrapper>
-    )
-}
-const Wrapper = styled.div`
-    margin-bottom: 15px;
-    .rdw-editor-main {
-        border: 1px solid #e9ecef;
-        padding-left: 10px;
-        padding-right: 10px;
-        height: ${props => props.height};
-        box-sizing: border-box;
-    }
-`
-
 export default BlogEditor
