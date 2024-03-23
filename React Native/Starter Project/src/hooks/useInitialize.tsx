@@ -44,7 +44,7 @@ function useInitialize() {
     });
 
     useEffect(() => {
-      dispatch(setDarkTheme(colorScheme === 'light'))
+      dispatch(setDarkTheme(colorScheme !== 'light'))
     }, [])
     useEffect(() => {
         if (fontError) console.log("Failed to load fonts", fontError)
